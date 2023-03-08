@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+
+        .parent{
+            padding: 1rem;
+            background-color: rgba(0, 0, 255, 0.456);
+            margin: 1rem;
+        }
+
+        .child{
+            padding: 1rem;
+            background-color: rgba(255, 0, 0, 0.456);
+        }
+
+        .wrapper div{
+
+            background-color: cornflowerblue;
+            padding: 1rem;
+            margin: 1rem;
+            display: inline-block;
+
+        }
+
+        .wrapper {
+            border: 1px black solid;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="parent">
+        <div class="child">
+            <button>Change me</button>
+        </div>
+    </div>
+
+    <div class="parent">
+        <div class="child">
+            <button>Change me</button>
+        </div>
+    </div>
+
+    <div class="wrapper">
+
+        <div>Child</div>
+        <div class="special">Child</div>
+        <div>Child</div>
+        <div class="special">Child</div>
+        <div>Child</div>
+
+    </div>
+
+    <script src="jquery-3.6.3.js"></script>
+
+    <script>
+
+        //why we need traversal: this will change both parents instead of the parent we clicked
+        /* $('button').click(function(){
+            $('.parent').css('background-color', 'green');
+        }) */
+
+        /* document.querySelectorAll('button').forEach(function (el) {
+
+             el.addEventListener('click', function(){
+                let currentElement = this;
+                while (currentElement && !currentElement.matches('.parent')){
+                    currentElement = currentElement.parentNode;
+                }
+
+                currentElement.style.backgroundColor = 'black';
+             })
+
+            }); */
+
+            //jQuery version
+             $('button').click(function(){
+              $(this).closest('.parent').css('background-color', 'black');
+           })
+
+           //downstream traversal
+           //children() will go right to the direct children (not grandchildren though)
+           /* $('.parent').click(function () {
+                $(this).children().children('button').css('background-color', 'black');
+            }) */
+
+            //if you want tot include any grandchild in the search, you can use .find()
+            $('.parent').click(function () {
+                    $(this).find('button').css('background-color', 'black');
+                })
+
+            //traversing to a sibling can be done with .next() in jQuery (for the element that is right next to the interacted one)
+
+            //nextAll() can be used to select any sibling that comes after the interacted element
+            
+            $('.special').click(function(){
+                $(this).nextAll().css('background-color', 'black');
+            })
+
+
+
+
+
+
+    </script>
+    
+</body>
+</html>

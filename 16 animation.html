@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .circle{
+            width: 5vw;
+            height: 5vw;
+            border-radius: 50%;
+            background-color: crimson;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="circle"></div>
+
+    <script src="jquery-3.6.3.js"></script>
+
+    <script>
+
+        //animate the circle with vanilla js:
+        
+       /*  const myCircle = document.querySelector('.circle');
+
+        //set up animation properties
+        let animationProperties = {
+            width: '10vw',
+            height: '10vw'
+        }
+
+        let animationOptions = {
+            duration: 2000
+        }
+
+        myCircle.animate(animationProperties, animationOptions); */
+
+      
+       
+
+        $('.circle').animate({
+            width: '20vw',
+            height: '20vw'
+        },2000);
+
+
+
+
+    </script>
+    
+</body>
+</html>
