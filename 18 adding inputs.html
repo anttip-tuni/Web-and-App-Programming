@@ -47,6 +47,15 @@
     height: 65%;
 }
 
+ .line {
+
+            transform-origin: 0 100%;
+            height: 5px;
+            background: rgb(46, 46, 46);
+            box-sizing: border-box;
+
+        }
+
     </style>
 
     <link rel="stylesheet" href="jquery-ui.css">
@@ -59,8 +68,8 @@
     
     </div>
 
-    <div class="circle">
-        <div class="textarea" contenteditable="true">Editable text</div>
+    <div class="circle" id="c0">
+        <div class="textarea" contenteditable="false">Double click to edit</div>
     </div>
 
     <script src="jquery-3.6.3.js"></script>
@@ -68,35 +77,28 @@
 
     <script>
 
-        //animate the circle with vanilla js:
-        
-       /*  const myCircle = document.querySelector('.circle');
-
-        //set up animation properties
-        let animationProperties = {
-            width: '10vw',
-            height: '10vw'
-        }
-
-        let animationOptions = {
-            duration: 2000
-        }
-
-        myCircle.animate(animationProperties, animationOptions); */
+      let newCircleID = 1;
 
     $('.plusButton').click(function () {
-        let myNewCircle = $('<div class="circle"><div class="textarea" contenteditable="true">Editable text</div></div>');
+        let myNewCircle = $('<div class="circle"><div class="textarea" contenteditable="false">Editable text</div></div>');
+        myNewCircle.attr('id','c'+newCircleID);
         $(myNewCircle).animate({
             width: '20vw',
             height: '20vw'
-        }, 2000);
+        }, 400);
         $('body').append(myNewCircle);
+        newCircleID++;
+
         $(myNewCircle).draggable({
             start: function (event, ui) {
                 $(this).find('[contenteditable]').attr('contenteditable', 'false'); // find any child elements with the contenteditable attribute and set it to false when dragging starts, and set it back to true when dragging ends. This prevents accidental text editing during dragging.
             },
             stop: function (event, ui) {
-                $(this).find('[contenteditable]').attr('contenteditable', 'true');
+                //$(this).find('[contenteditable]').attr('contenteditable', 'true');
+            },
+            drag: function (event, ui) {
+                //console.log('dragging');
+                updateLines(this);
             }
         });
         $(myNewCircle).find('[contenteditable]').on('mousedown', function (event) {
@@ -104,21 +106,35 @@
         });
     });
 
+    // Add a 'dblclick' event listener to the element
+        $('body').on('dblclick', '.textarea', function (event) {
+            // This code will execute when the element is double clicked
+            $(this).attr('contenteditable', 'true').focus();
+            console.log('Double clicked!');
+            
+        });
 
+    $('.textArea').on('blur', function () {
+        $(this).attr('contentEditable', false);
+    });
        
 
         $('.circle').animate({
             width: '20vw',
             height: '20vw'
-        },2000);
+        },400);
 
         $('.circle').draggable({
                 start: function (event, ui) {
                     $('.circle').find('[contenteditable]').attr('contenteditable', 'false');
                 },
                 stop: function (event, ui) {
-                    $('.circle').find('[contenteditable]').attr('contenteditable', 'true');
-                }
+                    //$('.circle').find('[contenteditable]').attr('contenteditable', 'true');
+                },
+                drag: function (event, ui) {
+                //console.log('dragging');
+                updateLines(this);
+            }
             });
             $('.circle').find('[contenteditable]').on('mousedown', function (event) {
                 event.stopPropagation();
@@ -136,6 +152,106 @@
                  $('.circle').removeClass('selected');
             }
         })
+
+         //SHIFT CLICK TO DRAW A LINE
+
+            $('body').on('mouseup', '.circle', function (event) {
+
+                if (event.shiftKey) { //check if shift was down while the event fired
+
+                    let selectedCircle = $('.selected'); //get the currently selected circle
+                    //let selectedCircleWrap = selectedCircle.parent('.circleWrap'); //get the currently selected circle
+                    //let thisParent = $(this).parent('.circleWrap'); //clicked circle wrap
+
+                    let x1Pos = selectedCircle[0].getBoundingClientRect().left + selectedCircle[0].getBoundingClientRect().width / 2;
+                    let y1Pos = selectedCircle[0].getBoundingClientRect().top + selectedCircle[0].getBoundingClientRect().height / 2;
+                    let x2Pos = $(this)[0].getBoundingClientRect().left + $(this)[0].getBoundingClientRect().width / 2;
+                    let y2Pos = $(this)[0].getBoundingClientRect().top + $(this)[0].getBoundingClientRect().height / 2;
+
+                    createLine(x1Pos, y1Pos, x2Pos, y2Pos, selectedCircle.attr('id'), $(this).attr('id'));
+
+                    console.log(` selectedCircle[0].getBoundingClientRect().width ${selectedCircle[0].getBoundingClientRect().width} selectedCircle[0].getBoundingClientRect().height ${selectedCircle[0].getBoundingClientRect().height}  $(this)[0].getBoundingClientRect().width ${$(this)[0].getBoundingClientRect().width} $(this)[0].getBoundingClientRect().height ${$(this)[0].getBoundingClientRect().height}`);
+
+                }
+
+            })
+
+                    //CREATE LINES BETWEEN NODES
+
+                        function createLine(x1, y1, x2, y2, circle1, circle2) {
+
+                            let length = Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+                            let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                            let transform = 'rotate(' + angle + 'deg)';
+
+                            offsetX = (x1 > x2) ? x2 : x1;
+                            offsetY = (y1 > y2) ? y2 : y1;
+
+                            let line = $('<div>')
+                                .prependTo('body')
+                                .addClass('line')
+                                .css({
+                                    'position': 'absolute',
+                                    'transform': transform
+                                })
+                                .width(length)
+                                .offset({
+                                    left: offsetX,
+                                    top: offsetY
+                                })
+                                .attr("data-circle1", circle1)
+                                .attr("data-circle2", circle2)
+                                ;
+
+                            /* if (id != null) line.attr('id', id); */
+
+                            return line;
+                        }
+
+                
+                    //MOVE A DRAGGABLE CIRCLE WITH LINES CONNECTED TO IT
+
+                    let allConnectedLines;
+
+                    function updateLines(element) {
+
+
+                        globalCheck = $(element).attr('id');
+
+
+                        let allConnectedLines = $('.line[data-circle1="' + $(element).attr('id') + '"],.line[data-circle2="' + $(element).attr('id') + '"]');
+
+                        //console.log('element id is ' + $(element).attr('id') + ' allConnectedLines length: ' + allConnectedLines.length);
+
+
+                        //for redrawing them we need to loop through all the selected lines and for each of them we will get the two data attributes, then select two circles based on those attributes and get the coordinates of those circles for redrawing
+                        //finally we destroy the old connected lines
+
+                        allConnectedLines.each(function (i, e) {
+
+                            let lineCircleConnect1 = $(e).data('circle1'); //get the circle ids from the lines
+                            let lineCircleConnect2 = $(e).data('circle2');
+
+                            //console.log('lineCircleConnect1: ' + lineCircleConnect1 + ' lineCircleConnect2: ' + lineCircleConnect2);
+
+                            let circle1 = $('#' + lineCircleConnect1); //select the circle from dom
+                            let circle2 = $('#' + lineCircleConnect2); //select the circle from dom
+
+                            let x1Pos = circle1[0].getBoundingClientRect().left + circle1[0].getBoundingClientRect().width / 2;
+                            let y1Pos = circle1[0].getBoundingClientRect().top + circle1[0].getBoundingClientRect().height / 2;
+                            let x2Pos = circle2[0].getBoundingClientRect().left + circle2[0].getBoundingClientRect().width / 2;
+                            let y2Pos = circle2[0].getBoundingClientRect().top + circle2[0].getBoundingClientRect().height / 2;
+
+                            $(this).remove();
+
+                            createLine(x1Pos, y1Pos, x2Pos, y2Pos, circle1.attr('id'), circle2.attr('id'));
+
+                        })
+
+                    }
+                
+
+
  
 
 
