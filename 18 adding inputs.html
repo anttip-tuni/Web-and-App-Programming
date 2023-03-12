@@ -130,6 +130,7 @@
                 },
                 stop: function (event, ui) {
                     //$('.circle').find('[contenteditable]').attr('contenteditable', 'true');
+                    saveToLocalStorage();
                 },
                 drag: function (event, ui) {
                 //console.log('dragging');
@@ -251,7 +252,61 @@
                     }
                 
 
+                    //SAVE TO LOCAL STORAGE
 
+                   function saveToLocalStorage() {
+                        const html = document.querySelector('body').innerHTML;
+                        const escapedHtml = JSON.stringify(html);
+                        localStorage.setItem('savedHTML', escapedHtml);
+                    }
+
+                    function restoreObjects() {
+                        console.log('restore');
+                            let data = JSON.parse(localStorage.getItem('savedHTML'));
+                            if (!data || !Array.isArray(data)) {
+                                return;
+                            }
+
+                            for (let i = 0; i < data.length; i++) {
+                                let circle = $('<div class="circle"><div class="textarea">' + data[i].text + '</div></div>');
+                                circle.attr('id', 'c' + i);
+                                circle.css({
+                                    width: data[i].width,
+                                    height: data[i].height,
+                                    top: data[i].top,
+                                    left: data[i].left
+                                });
+                                $('body').append(circle);
+
+                                circle.draggable({
+                                    start: function (event, ui) {
+                                        $(this).find('[contenteditable]').attr('contenteditable', 'false');
+                                    },
+                                    stop: function (event, ui) {
+                                        updateLines(this);
+                                        saveToLocalStorage();
+                                    },
+                                    drag: function (event, ui) {
+                                        updateLines(this);
+                                    }
+                                });
+
+                                circle.find('[contenteditable]').on('mousedown', function (event) {
+                                    event.stopPropagation();
+                                });
+
+                                if (data[i].selected) {
+                                    circle.addClass('selected');
+                                }
+                            }
+
+                            updateLines();
+                        }
+
+
+                        $(document).ready(function () {
+                                restoreObjects();
+                            });
  
 
 

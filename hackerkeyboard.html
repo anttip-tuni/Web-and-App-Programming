@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: black;
+            color: greenyellow;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="my-element"></div>
+
+
+    <script>
+
+        function typeTextOnKeyDown(text, delay = 0) { //0 is default but can be overridden
+                const lines = text.split('\n');
+                let lineIndex = 0;
+                let charIndex = 0;
+
+                function typeLine() {
+                    if (lineIndex === lines.length) {
+                        return;
+                    }
+                    const line = lines[lineIndex];
+
+                    if (charIndex < line.length) {
+                        // don't automatically type characters, wait for keydown event
+                    } else {
+                        lineIndex++;
+                        charIndex = 0;
+                        document.body.appendChild(document.createElement('br'));
+                    }
+                }
+
+                typeLine();
+
+                document.addEventListener('keydown', function (event) {
+                    if (lineIndex === lines.length) {
+                        return;
+                    }
+                    const line = lines[lineIndex];
+
+                    if (charIndex < line.length) {
+                        document.body.appendChild(document.createTextNode(line.charAt(charIndex)));
+                        charIndex++;
+                        setTimeout(typeLine, delay);
+                    } else {
+                        lineIndex++;
+                        charIndex = 0;
+                        document.body.appendChild(document.createElement('br'));
+                    }
+                });
+            }
+
+        let text =
+            `var accessGranted = false;
+var password = prompt("Enter access code:");
+if (password === "********") {
+accessGranted = true;
+}
+if (accessGranted) {
+console.log("Access granted. Initiating hack...");
+console.log("Connecting to server...");
+ console.log("Overriding security protocols...");
+                    console.log("Downloading confidential files...");
+                    console.log("Initiating encryption sequence...");
+                    console.log("Hack complete. Files secured.");
+                } else {
+                    console.log("Access denied. Initiating security alert...");
+                    console.log("Sending security team to location...");
+                    console.log("Locking down system...");
+                    console.log("Security breach detected. Initiating system shutdown...");
+                }
+                `
+            ;
+
+ 
+            typeTextOnKeyDown(text);
+
+
+    </script>
+</body>
+
+</html>
