@@ -42,8 +42,9 @@
 .textarea {
     display: flex;
     align-items: center;
-    width: 90%;
-    height: 90%;
+    justify-content: center;
+    width: 65%;
+    height: 65%;
 }
 
     </style>
@@ -59,7 +60,7 @@
     </div>
 
     <div class="circle">
-        <div class="textarea" contenteditable="true">Change Me</div>
+        <div class="textarea" contenteditable="true">Editable text</div>
     </div>
 
     <script src="jquery-3.6.3.js"></script>
@@ -83,15 +84,27 @@
 
         myCircle.animate(animationProperties, animationOptions); */
 
-      $('.plusButton').click(function(){
-        let myNewCircle = $('<div class="circle"></div>');
-         $(myNewCircle).animate({
-              width: '20vw',
-              height: '20vw'
-          }, 2000);
+    $('.plusButton').click(function () {
+        let myNewCircle = $('<div class="circle"><div class="textarea" contenteditable="true">Editable text</div></div>');
+        $(myNewCircle).animate({
+            width: '20vw',
+            height: '20vw'
+        }, 2000);
         $('body').append(myNewCircle);
-         $(myNewCircle).draggable();
-      })
+        $(myNewCircle).draggable({
+            start: function (event, ui) {
+                $(this).find('[contenteditable]').attr('contenteditable', 'false'); // find any child elements with the contenteditable attribute and set it to false when dragging starts, and set it back to true when dragging ends. This prevents accidental text editing during dragging.
+            },
+            stop: function (event, ui) {
+                $(this).find('[contenteditable]').attr('contenteditable', 'true');
+            }
+        });
+        $(myNewCircle).find('[contenteditable]').on('mousedown', function (event) {
+            event.stopPropagation();
+        });
+    });
+
+
        
 
         $('.circle').animate({
@@ -99,7 +112,17 @@
             height: '20vw'
         },2000);
 
-        //$('.circle').draggable();
+        $('.circle').draggable({
+                start: function (event, ui) {
+                    $('.circle').find('[contenteditable]').attr('contenteditable', 'false');
+                },
+                stop: function (event, ui) {
+                    $('.circle').find('[contenteditable]').attr('contenteditable', 'true');
+                }
+            });
+            $('.circle').find('[contenteditable]').on('mousedown', function (event) {
+                event.stopPropagation();
+            });;
 
        
         //will only work for the existing circle, but not for new circles that are added dynamically
