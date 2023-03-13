@@ -130,6 +130,16 @@
                  $('.circle').removeClass('selected');
             }
         })
+
+        //DETECT A SHIFT CLICK
+
+        $('body').on('mouseup', '.circle', function(event){
+
+            if (event.shiftKey){
+                console.log('you clicked on a circle while holding down shift');
+            }
+
+        })
  
 
 
