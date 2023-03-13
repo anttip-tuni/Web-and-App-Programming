@@ -131,7 +131,11 @@
             height: '20vw'
         },2000);
 
-        $('.circle').draggable();
+        $('.circle').draggable({
+                drag: function (event, ui) {
+                    updateLines(this);
+                }
+            });
 
        
        //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
