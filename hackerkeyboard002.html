@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <script src="jquery-3.6.3.js"></script>
+    <script>
+
+        const array = [];
+        let characterIndex = 0;
+        
+            let text =
+                        `var accessGranted = false;
+var password = prompt("Enter access code:");
+if (password === "********") {
+accessGranted = true;
+}
+if (accessGranted) {
+console.log("Access granted. Initiating hack...");
+console.log("Connecting to server...");
+ console.log("Overriding security protocols...");
+                    console.log("Downloading confidential files...");
+                    console.log("Initiating encryption sequence...");
+                    console.log("Hack complete. Files secured.");
+                } else {
+                    console.log("Access denied. Initiating security alert...");
+                    console.log("Sending security team to location...");
+                    console.log("Locking down system...");
+                    console.log("Security breach detected. Initiating system shutdown...");
+                }
+                `;
+
+
+    for (let i = 0; i < text.length; i++) {
+         if (text[i] === '\n') {
+            console.log('linebreak');
+            array.push('\n');
+        } else {
+            array.push(text[i]);
+        }
+        
+    }
+
+    console.log(array);
+
+     $(document).on('keydown', function (event) {
+        if (array[characterIndex] === '\n'){
+            $('body').append('<br>');
+        } else {
+            $('body').append(array[characterIndex]);
+        }
+        
+        characterIndex++;
+
+     })
+
+
+
+
+    </script>
+    
+</body>
+</html>
