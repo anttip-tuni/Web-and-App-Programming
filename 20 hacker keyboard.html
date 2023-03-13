@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,16 +12,34 @@
             background-color: black;
             color: greenyellow;
         }
+
+        #cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: greenyellow;
+            animation: blink 0.7s step-end infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
+
 <body>
-    
-<script src="jquery-3.6.3.js"></script>
 
-<script>
+    <div id="cursor"></div>
 
-//define one big string
-    const text = `# Running SQL Injection script...
+    <script src="jquery-3.6.3.js"></script>
+
+    <script>
+
+        //define one big string
+        const text = `# Running SQL Injection script...
 execute_query("SELECT * FROM users WHERE username = '" + admin_username + "' AND password = '" + admin_password + "';")
 
 # Injecting malicious code...
@@ -43,34 +62,36 @@ transfer_data(encrypted_data)
 
 # Cleaning up traces...
 remove_logs()
-` 
-//put each character of the string inside an array
+`
+        //put each character of the string inside an array
 
-let myArray = [];
+        let myArray = [];
 
-let characterIndex = 0;
+        let characterIndex = 0;
 
-for (let i=0; i < text.length; i++){
-    
-    myArray.push(text[i]);
-}
+        const cursor = $('#cursor'); //selecting the element with ID "cursor"
 
-$(document).on('keydown', function(event){
+        for (let i = 0; i < text.length; i++) {
 
-    if (myArray[characterIndex] === "\n"){
-         $('body').append('<br>');
-    } else {
-        $('body').append(myArray[characterIndex]);
-    }
+            myArray.push(text[i]);
+        }
 
-    
+        $(document).on('keydown', function (event) {
 
-    characterIndex++;
+            if (myArray[characterIndex] === "\n") {
+                $('body').append('<br>');
+            } else {
+                $('body').append(myArray[characterIndex]);
+            }
+            $('body').append(cursor); //append the cursor always as the last element in body
 
-})
+            characterIndex++;
+
+        })
 
 
-</script>
+    </script>
 
 </body>
+
 </html>
