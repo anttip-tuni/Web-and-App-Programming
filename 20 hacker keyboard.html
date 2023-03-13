@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: black;
+            color: greenyellow;
+        }
+    </style>
+</head>
+<body>
+    
+<script src="jquery-3.6.3.js"></script>
+
+<script>
+
+//define one big string
+    const text = `# Running SQL Injection script...
+execute_query("SELECT * FROM users WHERE username = '" + admin_username + "' AND password = '" + admin_password + "';")
+
+# Injecting malicious code...
+malicious_code = "' OR 1=1 --"
+execute_query("SELECT * FROM users WHERE username = '" + admin_username + "' AND password = '" + admin_password + malicious_code + "';")
+
+# Attempting to gain unauthorized access...
+if login_successful:
+    access_granted = True
+
+# Downloading sensitive data...
+if access_granted:
+    data = download_data()
+
+# Encrypting data for transfer...
+encrypted_data = encrypt_data(data)
+
+# Transfer complete.
+transfer_data(encrypted_data)
+
+# Cleaning up traces...
+remove_logs()
+` 
+//put each character of the string inside an array
+
+let myArray = [];
+
+let characterIndex = 0;
+
+for (let i=0; i < text.length; i++){
+    
+    myArray.push(text[i]);
+}
+
+$(document).on('keydown', function(event){
+
+    if (myArray[characterIndex] === "\n"){
+         $('body').append('<br>');
+    } else {
+        $('body').append(myArray[characterIndex]);
+    }
+
+    
+
+    characterIndex++;
+
+})
+
+
+</script>
+
+</body>
+</html>
