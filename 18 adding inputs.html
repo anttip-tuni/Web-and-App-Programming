@@ -39,9 +39,11 @@
     justify-content: center;
 }
 
-.textarea {
+
+.textareawrap {
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 90%;
     height: 90%;
 }
@@ -59,7 +61,9 @@
     </div>
 
     <div class="circle">
-        <div class="textarea" contenteditable="true">Change Me</div>
+        <div class="textareawrap">
+            <div class="textarea" contenteditable="false">Change Me</div>
+        </div>
     </div>
 
     <script src="jquery-3.6.3.js"></script>
@@ -67,24 +71,37 @@
 
     <script>
 
-        //animate the circle with vanilla js:
         
-       /*  const myCircle = document.querySelector('.circle');
 
-        //set up animation properties
-        let animationProperties = {
-            width: '10vw',
-            height: '10vw'
+
+    //DETECT DOUBLE CLICKS ON THE TEXTAREA DIV
+    $('body').on('dblclick', '.textarea', function(){
+        $(this).attr('contenteditable', 'true').focus();
+
+        let myCircle = $(this).closest('.circle');
+
+        if (myCircle.data('ui-draggable')){
+             $(myCircle).draggable('destroy');
         }
 
-        let animationOptions = {
-            duration: 2000
-        }
+    })
 
-        myCircle.animate(animationProperties, animationOptions); */
+    //CHEK IF THE TEXT AREA STOPS BEING IN FOCUS
+    $('body').on('blur', '.textarea', function(){
+
+        $(this).attr('contenteditable', 'false');
+        $(this).closest('.circle').draggable();
+    })
+
+
+
+    $('body').on('mousedown', '.textarea', function(event){
+        console.log('mousedown on .textarea');
+        event.stopPropagation();
+    })
 
       $('.plusButton').click(function(){
-        let myNewCircle = $('<div class="circle"></div>');
+        let myNewCircle = $('<div class="circle"><div class="textareawrap"><div class="textarea" contenteditable="false">Change Me</div></div ></div>');
          $(myNewCircle).animate({
               width: '20vw',
               height: '20vw'
@@ -99,7 +116,7 @@
             height: '20vw'
         },2000);
 
-        //$('.circle').draggable();
+        $('.circle').draggable();
 
        
         //will only work for the existing circle, but not for new circles that are added dynamically
