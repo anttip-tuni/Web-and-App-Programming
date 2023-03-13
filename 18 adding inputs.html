@@ -48,6 +48,13 @@
     height: 90%;
 }
 
+.line {
+    height: 3px;
+    background-color: chocolate;
+    transform-origin: 0 100%;
+}
+
+
     </style>
 
     <link rel="stylesheet" href="jquery-ui.css">
@@ -119,7 +126,7 @@
         $('.circle').draggable();
 
        
-        //will only work for the existing circle, but not for new circles that are added dynamically
+       //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
         $('body').on('click', '.circle', function(){
             $(this).toggleClass('selected');
         });
@@ -137,10 +144,49 @@
 
             if (event.shiftKey){
                 console.log('you clicked on a circle while holding down shift');
+                let selectedCircle = $('.selected');
+
+                let selectedCircleWidth = selectedCircle[0].getBoundingClientRect().width;
+                let clickedCircleWidth = $(this)[0].getBoundingClientRect().width;
+
+                let x1pos = selectedCircle[0].getBoundingClientRect().left + selectedCircleWidth/2; //[0] take the first element from the jQuery object and then get it's x coordinate
+                let y1pos = selectedCircle[0].getBoundingClientRect().top + clickedCircleWidth/2;
+                let x2pos = $(this)[0].getBoundingClientRect().left + clickedCircleWidth/2;
+                let y2pos = $(this)[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+
+                console.log('creating a line now, this is: ' + this);
+
+                createLine(x1pos, y1pos, x2pos, y2pos);
+
             }
 
         })
  
+            //CREATE A LINE BETWEEN TWO ELEMENTS (FOUR COORDINATES):
+            function createLine(x1, y1, x2, y2){
+
+                let length = Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+                let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                let transform = 'rotate(' + angle + 'deg)';
+
+                offsetX = (x1 > x2) ? x2 : x1;
+                offsetY = (y1 > y2) ? y2 : y1;
+
+                let line = $('<div>')
+                            .prependTo('body')
+                            .addClass('line')
+                            .css({
+                                'position': 'absolute',
+                                'transform': transform
+                            })
+                            .width(length)
+                            .offset({
+                                left: offsetX,
+                                top: offsetY
+                            })
+
+
+            }
 
 
     </script>
