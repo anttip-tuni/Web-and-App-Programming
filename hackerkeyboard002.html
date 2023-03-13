@@ -5,14 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+    body {
+    background-color: black;
+    color: greenyellow;
+    font-family: 'Courier New', Courier, monospace;
+    }
+    #cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.2em;
+    background-color: greenyellow;
+    animation: blink 0.7s step-end infinite;
+    margin-left: 2px;
+    }
+    
+    @keyframes blink {
+    50% {
+    opacity: 0;
+    }
+    }
+    </style>
 </head>
 <body>
+    <div id="cursor"></div>
 
     <script src="jquery-3.6.3.js"></script>
     <script>
 
         const array = [];
         let characterIndex = 0;
+        const cursor = $('#cursor');
         
             let text =
                         `var accessGranted = false;
@@ -54,12 +77,16 @@ console.log("Connecting to server...");
         } else {
             $('body').append(array[characterIndex]);
         }
+        $('body').append(cursor);
+
         
         characterIndex++;
 
      })
 
-
+ /* Independent task:
+ Can you create a couple of secrect keyboard shortcuts that can trigger messages like "access denied" or "access granted"
+ */
 
 
     </script>
