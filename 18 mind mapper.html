@@ -64,6 +64,7 @@
     <div id="header">
         <h1>Mind Mapper</h1>
         <div class="plusButton">+</div>
+        <input type="color" id="color">
     
     </div>
 
@@ -231,7 +232,20 @@
                     createLine(x1Pos, y1Pos, x2Pos, y2Pos, circle1.attr('id'), circle2.attr('id'));
 
                 })
-            }
+            } //update lines
+
+            //Change the color of the selected circles
+
+            $('body').on('input', '#color', function(){
+                //console.log($(this).val());
+
+                $('.selected').css("background-color", $(this).val());
+
+            })
+            
+        
+
+            
 
 
     </script>
