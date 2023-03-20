@@ -11,6 +11,7 @@
             height: 5vw;
             border-radius: 50%;
             background-color: crimson;
+            
         }
 
         div#header {
@@ -65,6 +66,9 @@
         <h1>Mind Mapper</h1>
         <div class="plusButton">+</div>
         <input type="color" id="color">
+      
+                <input type="range" min="25" max="1000" value="200" id="circlesize">
+            </div>
     
     </div>
 
@@ -258,11 +262,13 @@
                         const circleText = $(this).find('.textarea').text();
                         const circleColor = $(this).css('background-color');
                         const circlePos = $(this).position();
+                        const circleTransform = $(this).css('transform');
                         circlesData.push({
                             id: circleID,
                             text: circleText,
                             color: circleColor,
-                            position: circlePos
+                            position: circlePos,
+                            transform: circleTransform
                         });
                     });
 
@@ -303,6 +309,7 @@
                         circle.css('left', circleData.position.left + 'px');
                         circle.css('top', circleData.position.top + 'px');
                         circle.css('position', 'absolute');
+                        circle.css('transform', circleData.transform);
                         $('body').append(circle);
                         $(circle).draggable({
                             drag: function (event, ui) {
@@ -334,6 +341,17 @@
                     });
 
 
+    //CHANGE CIRCLE SIZE WHEN RANGE SLIDER IS MOVED
+
+    $('#circlesize').on('change input', function () {
+        //console.log(`change ${$(this).val()}`);
+        //$('.selected').css("width", $(this).val());
+        let scaleValue = $(this).val() / 100;
+        $('.selected').css({ 'transform': 'scale(' + scaleValue + ')' });
+        //$('.circle input').css("font-size", $(this).val()/8+10 +'px');
+        selectedSize = scaleValue;
+        saveToLocalStorage();
+    })
         
 
             
