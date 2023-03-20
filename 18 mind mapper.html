@@ -7,10 +7,13 @@
     <title>Document</title>
     <style>
         .circle{
-            width: 5vw;
-            height: 5vw;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             background-color: crimson;
+            position: absolute;
+            box-sizing: border-box;
+            box-shadow: #0000005c 2px 2px 10px;
         }
 
         div#header {
@@ -65,6 +68,7 @@
         <h1>Mind Mapper</h1>
         <div class="plusButton">+</div>
         <input type="color" id="color">
+        <input type="range" min="50" max="1500" value="200" id="circlesize">
     
     </div>
 
@@ -234,7 +238,8 @@
                 })
             } //update lines
 
-            //Change the color of the selected circles
+
+            //CHANGE THE COLOR OF THE SELECTED CIRCLES
 
             $('body').on('input', '#color', function(){
                 //console.log($(this).val());
@@ -243,7 +248,30 @@
 
             })
             
-        
+            //CHANGE THE SIZE OF THE CIRCLES
+
+            $("#circlesize").on('change input', function(){
+                const scaleValueFromSlider = $(this).val();
+                //console.log('scaleValueFromSlider: ' + scaleValueFromSlider);
+                $('.selected').each(function() {
+
+                    const currentWidth = $(this).outerWidth();
+                    //console.log(currentWidth);
+                    $(this).css({'width': scaleValueFromSlider, 'height': scaleValueFromSlider});
+
+                    const currentPosition = $(this).position();
+
+                    let newX = currentPosition.left - (scaleValueFromSlider - currentWidth) / 2;
+                    let newY = currentPosition.top - (scaleValueFromSlider - currentWidth) / 2;
+
+                    $(this).css({left: newX, top: newY});
+                   
+
+
+
+                })
+            })
+
 
             
 
