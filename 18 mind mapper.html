@@ -67,9 +67,11 @@
         <h1>Mind Mapper</h1>
         <div class="plusButton">+</div>
         <input type="color" id="color">
-      
-                <input type="range" min="25" max="1000" value="200" id="circlesize">
-            </div>
+        <input type="range" min="25" max="1000" value="200" id="circlesize">
+        <span id="download">DOWNLOAD</span>
+        <input type="file" id="jsonFile" accept="application/json">
+
+    </div>
     
     </div>
 
@@ -290,6 +292,23 @@
                         localStorage.setItem('mindMapperData', jsonData);
                     }
 
+                function saveToFile(){
+                    const data = extractData();
+                    const jsonData = JSON.stringify(data);
+                      // Create a Blob with the JSON data
+                    const blob = new Blob([jsonData], { type: 'application/json' });
+
+                    // Create an anchor element and set the download attribute
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'data.json'; // You can change the filename to your preference
+
+                    // Append the anchor element to the DOM, trigger the download, and remove the element
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+
             function loadFromLocalStorage() {
                     const jsonData = localStorage.getItem('mindMapperData');
                     if (!jsonData) return;
@@ -366,8 +385,34 @@
         saveToLocalStorage();
     })
         
+    //DOWNLOAD
+    $('#download').click(function(){
+        saveToFile();
+    })
+        
+    //UPLOAD
+    document.getElementById('jsonFile').addEventListener('change', function (event) {
+            const file = event.target.files[0];
 
-            
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    try {
+                        //const jsonData = JSON.parse(e.target.result);
+                        //console.log(jsonData); // You can replace this with your function to process the JSON data
+                        localStorage.setItem('mindMapperData', e.target.result);
+                        loadFromLocalStorage();
+
+                    } catch (error) {
+                        alert('Invalid JSON file.');
+                    }
+                };
+
+                reader.readAsText(file);
+            }
+        });
+
 
 
     </script>
