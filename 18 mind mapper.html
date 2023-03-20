@@ -11,7 +11,8 @@
             height: 5vw;
             border-radius: 50%;
             background-color: crimson;
-            
+            position: absolute;
+           box-sizing: border-box;
         }
 
         div#header {
@@ -262,13 +263,12 @@
                         const circleText = $(this).find('.textarea').text();
                         const circleColor = $(this).css('background-color');
                         const circlePos = $(this).position();
-                        const circleTransform = $(this).css('transform');
                         circlesData.push({
                             id: circleID,
                             text: circleText,
                             color: circleColor,
                             position: circlePos,
-                            transform: circleTransform
+                            width: $(this).width()
                         });
                     });
 
@@ -309,7 +309,8 @@
                         circle.css('left', circleData.position.left + 'px');
                         circle.css('top', circleData.position.top + 'px');
                         circle.css('position', 'absolute');
-                        circle.css('transform', circleData.transform);
+                        circle.width(circleData.width);
+                        circle.height(circleData.width);
                         $('body').append(circle);
                         $(circle).draggable({
                             drag: function (event, ui) {
@@ -346,10 +347,22 @@
     $('#circlesize').on('change input', function () {
         //console.log(`change ${$(this).val()}`);
         //$('.selected').css("width", $(this).val());
-        let scaleValue = $(this).val() / 100;
-        $('.selected').css({ 'transform': 'scale(' + scaleValue + ')' });
-        //$('.circle input').css("font-size", $(this).val()/8+10 +'px');
-        selectedSize = scaleValue;
+        let scaleValue = $(this).val();
+
+        $('.selected').each(function(){
+            let currentWidth = $(this).outerWidth();
+            $(this).css({ 'width': scaleValue, 'height': scaleValue });
+            //$('.circle input').css("font-size", $(this).val()/8+10 +'px');
+            selectedSize = scaleValue;
+            let currentPosition = $(this).position();
+            let newX = currentPosition.left - (scaleValue - currentWidth) / 2;
+            let newY = currentPosition.top - (scaleValue - currentWidth) / 2;
+            $(this).css({ left: newX, top: newY });
+        })
+
+       
+
+        updateLines();
         saveToLocalStorage();
     })
         
