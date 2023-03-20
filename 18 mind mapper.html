@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        body{
+            min-height: 90vh;
+        }
+
         .circle{
             width: 200px;
             height: 200px;
@@ -83,7 +87,23 @@
 
     <script>
 
+        /*
+        TO DO LIST:
+        -Would be nice to control drag circles to duplicate them with the same properties that they already have and also connecting to the same nodes
+        -deleting localstorage saves
+        -delete circles with an eraser tool and or by selecting it and hitting delete
+        -saving and opening files
+        -sizing also the texts
+        -undo and redo
+        X remove all selections when clicking on an empty spot
+        
+        */
+
     let newCircleID = 1;
+
+    $(document).ready(function(){
+        loadFromLocalStorage();
+    })
 
 
     //DETECT DOUBLE CLICKS ON THE TEXTAREA DIV
@@ -102,10 +122,22 @@
     $('body').on('blur', '.textarea', function(){
 
         $(this).attr('contenteditable', 'false');
-        $(this).closest('.circle').draggable();
+        $(this).closest('.circle').draggable({
+            drag: function (event, ui) {
+                updateLines(this);
+            },
+            stop: function (event, ui) {
+                saveToLocalStorage();
+            }
+        });
+
+        saveToLocalStorage();
     })
 
+   
+    
 
+            
 
     $('body').on('mousedown', '.textarea', function(event){
         console.log('mousedown on .textarea');
@@ -126,8 +158,12 @@
          $(myNewCircle).draggable({
             drag: function (event, ui){
                 updateLines(this);
-            }
+            }, 
+            stop: function (event, ui) {
+                 saveToLocalStorage();
+             }
          });
+         saveToLocalStorage();
       })
        
 
@@ -139,6 +175,9 @@
         $('.circle').draggable({
                 drag: function (event, ui) {
                     updateLines(this);
+                },
+                stop: function (event, ui) {
+                    saveToLocalStorage();
                 }
             });
 
@@ -151,6 +190,7 @@
         //remove selection from circles if just the body was clicked
         $('body').click(function(e){
             if ($(e.target).is('body')){
+                console.log('should remove selections now');
                  $('.circle').removeClass('selected');
             }
         })
@@ -179,6 +219,7 @@
                 console.log('creating a line now, this is: ' + this);
 
                 createLine(x1pos, y1pos, x2pos, y2pos, selectedCircleID, clickedCircleID);
+                saveToLocalStorage();
 
             }
 
@@ -245,6 +286,7 @@
                 //console.log($(this).val());
 
                 $('.selected').css("background-color", $(this).val());
+                saveToLocalStorage();
 
             })
             
@@ -270,10 +312,119 @@
 
 
                 })
+                saveToLocalStorage();
             })
 
+            //GET THE NECESSARY DATA FROM EVERY ELEMENT OF THE MIND MAP
+            function extractData(){
 
-            
+                //loop through each circle and push the needed info as an object into an array
+                const circlesData = [];
+                
+                $('.circle').each(function(){
+                        const circleID = $(this).attr('id');
+                        const circleText = $(this).find('.textarea').text();
+                        const circleColor = $(this).css('background-color');
+                        const circlePos = $(this).position();
+                        const circleWidth = $(this).width();
+                        circlesData.push({
+                            id: circleID,
+                            text: circleText,
+                            color: circleColor,
+                            position: circlePos,
+                            width: circleWidth
+                        })
+
+                }) //end circle each
+
+                //loop through each line
+                const linesData = [];
+                $('.line').each(function(){
+                    const lineData = {
+                        circle1: $(this).data('circle1'),
+                        circle2: $(this).data('circle2')
+                    };
+
+                    linesData.push(lineData);
+
+                });
+
+                return {
+                    circles: circlesData,
+                    lines: linesData
+                }
+
+            } //end extract data
+
+            //SAVE TO STORAGE:
+            function saveToLocalStorage(){
+                console.log('Should store to local storage now');
+                const myData = extractData(); //store the return value of extractData into a variable called myData
+                const jsonData = JSON.stringify(myData);
+                localStorage.setItem('mindMapperData', jsonData);
+                localStorage.setItem('latestID', newCircleID);
+            }
+
+            //GET THE CIRCLES AND LINES BACK FROM LOCAL STORAGE
+
+            function loadFromLocalStorage(){
+                const jsonData = localStorage.getItem('mindMapperData');
+                if (!jsonData) return; //quit/exit the function early if there is no data yet
+
+                const theLatestID = localStorage.getItem('latestID');
+                if (!theLatestID) return;
+
+                newCircleID = theLatestID;
+
+
+                const myData = JSON.parse(jsonData);
+
+                //Clear existing elements
+                $('.circle').remove();
+                $('.line').remove();
+
+                myData.circles.forEach(circleData => {
+                    //create a new html element for each circle
+                    const circle = $(`
+                    <div class="circle">
+                        <div class="textareawrap">
+                             <div class="textarea" contenteditable="false">Change Me</div>
+                        </div>
+                    </div>
+                    `);
+
+                    circle.attr('id', circleData.id);
+                    circle.find('.textarea').text(circleData.text);
+                    circle.css('background-color', circleData.color);
+                    circle.css('left', circleData.position.left + 'px');
+                    circle.css('top', circleData.position.top + 'px');
+                    circle.width(circleData.width);
+                    circle.height(circleData.width);
+                    $('body').append(circle);
+                    $(circle).draggable({
+                        drag: function(event, ui){
+                            updateLines(this);
+                        },
+                        stop: function(event, ui){
+                            saveToLocalStorage();
+                        }
+                    });
+                }) //end circles for each
+
+                // Recreate lines
+                myData.lines.forEach(lineData => {
+                    const circle1 = $('#' + lineData.circle1);
+                    const circle2 = $('#' + lineData.circle2);
+
+                    const x1Pos = circle1[0].getBoundingClientRect().left + circle1[0].getBoundingClientRect().width / 2;
+                    const y1Pos = circle1[0].getBoundingClientRect().top + circle1[0].getBoundingClientRect().height / 2;
+                    const x2Pos = circle2[0].getBoundingClientRect().left + circle2[0].getBoundingClientRect().width / 2;
+                    const y2Pos = circle2[0].getBoundingClientRect().top + circle2[0].getBoundingClientRect().height / 2;
+
+                    createLine(x1Pos, y1Pos, x2Pos, y2Pos, circle1.attr('id'), circle2.attr('id'));
+                });
+   
+            } //end load from local storage
 
 
     </script>

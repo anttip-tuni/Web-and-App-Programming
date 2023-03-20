@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permanent Note Taker</title>
+    <style>
+
+
+
+/* CSS */
+.button {
+    appearance: button;
+    background-color: #1899D6;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: block;
+    font-family: din-round,sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 10px 13px;
+    text-align: center;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+}
+
+.button:after {
+  background-clip: padding-box;
+  background-color: #1CB0F6;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button:main,
+.button:focus {
+  user-select: auto;
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button:disabled {
+  cursor: auto;
+}
+
+    </style>
+</head>
+<body>
+
+    <textarea id="notesArea" cols="30" rows="10"></textarea>
+    <button id="deleteSave" class="button">Delete save</button>
+
+
+
+    <script>
+
+        let theTextArea = document.querySelector('#notesArea');
+
+        //store the text into "permanent" storage when the input is changed 
+        theTextArea.addEventListener("input", function(){
+            const myNotes = this.value;
+            //console.log(myNotes);
+            localStorage.setItem('myNotesData', myNotes);
+        })
+
+        //load the text from permanent storage when the page is ready
+
+        document.addEventListener('DOMContentLoaded', function(){
+            const myRetrievedNotesData = localStorage.getItem('myNotesData');
+            //console.log(myRetrievedNotesData);
+            theTextArea.value = myRetrievedNotesData;
+        })
+
+        //remove the saved data when clicked
+        document.querySelector('#deleteSave').addEventListener('click', function(){
+
+            if (confirm("Are you sure you want to delete your notes from storage?")){
+                //code for deleting
+                localStorage.removeItem('myNotesData');
+                theTextArea.value = '';
+
+            } else {
+                //just cancel
+            }
+
+            
+        })
+
+        
+
+
+    </script>
+    
+</body>
+</html>
