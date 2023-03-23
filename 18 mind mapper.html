@@ -107,7 +107,7 @@
 
 
 
-    let ctrlPressed = false;
+ /*    let ctrlPressed = false;
     let dragging = false;
 
         $(document).keydown(function (event) {
@@ -120,7 +120,7 @@
             if (event.which === 17) {
                 ctrlPressed = false;
             }
-        });
+        }); */
 
 
      //DRAGGABLE OPTIONS OBJECT:
@@ -131,7 +131,9 @@
                             if (event.ctrlKey) {
                                 $(this).addClass('cloned');
                                 $(this).data('cloned', $(this).clone().removeClass('cloned'));
-                            } else {
+                                $(this).data('originalCircle', $(this).attr('id'));
+                                console.log('id: ' + $(this).attr('id'));
+                            } else { //no ctrl
                                 $(this).removeClass('cloned');
                             }
                         },
@@ -147,8 +149,58 @@
                                     left: ui.offset.left,
                                     top: ui.offset.top
                                 });
+                                cloned.attr('id', 'c' + newCircleID);
+                                newCircleID++;
                                 cloned.draggable(draggableOptions);
                                 $(this).data('cloned', cloned);
+
+                                //scoping
+
+                                let otherCircleID;
+
+                                 let originalCircleID = $(this).data('originalCircle');
+
+                                //check if there are lines with the id of the original one:
+                                let allConnectedLines = $(`.line[data-circle1="${originalCircleID}"],.line[data-circle2="${originalCircleID}"]`);
+                                //TO DO: find the other end of the line and create a line between that circle and the cloned circle 
+
+                                if (allConnectedLines.length > 0){
+
+                                    allConnectedLines.each(function (index, line) {
+                                        let lineCircleConnect1 = $(line).data('circle1');
+                                        let lineCircleConnect2 = $(line).data('circle2');
+                                        otherCircleID = (lineCircleConnect1 === $(originalCircleID).attr('id')) ? lineCircleConnect2 : lineCircleConnect1;
+                                        //console.log(otherCircleID);
+                                    });
+
+                                    //now draw the line:
+
+                                    let selectedCircle = $(cloned);
+
+                                    let selectedCircleID = selectedCircle.attr('id');
+                                    let clickedCircleID = otherCircleID;
+
+                                    console.log('selectedCircleID ' + selectedCircleID + ' clickedCircleID ' + clickedCircleID);
+
+                                    let selectedCircleWidth = selectedCircle[0].getBoundingClientRect().width;
+                                    let clickedCircleWidth = $(this)[0].getBoundingClientRect().width;
+
+                                    let x1pos = selectedCircle[0].getBoundingClientRect().left + selectedCircleWidth / 2; //[0] take the first element from the jQuery object and then get it's x coordinate
+                                    let y1pos = selectedCircle[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+                                    let x2pos = $(this)[0].getBoundingClientRect().left + clickedCircleWidth / 2;
+                                    let y2pos = $(this)[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+
+                                    console.log('creating a line now, this is: ' + this);
+
+                                    createLine(x1pos, y1pos, x2pos, y2pos, selectedCircleID, clickedCircleID);
+
+
+                                }
+                                
+
+                                
+
+
                                 saveToLocalStorage();
                             } else {
                                 saveToLocalStorage();
