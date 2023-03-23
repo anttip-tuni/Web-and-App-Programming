@@ -106,6 +106,65 @@
     })
 
 
+
+    let ctrlPressed = false;
+    let dragging = false;
+
+        $(document).keydown(function (event) {
+            if (event.which === 17) { // 17 is the keycode for Ctrl key
+                ctrlPressed = true;
+            }
+        });
+
+        $(document).keyup(function (event) {
+            if (event.which === 17) {
+                ctrlPressed = false;
+            }
+        });
+
+
+     //DRAGGABLE OPTIONS OBJECT:
+
+        draggableOptions = {
+                
+                        start: function (event, ui) {
+                            if (event.ctrlKey) {
+                                $(this).addClass('cloned');
+                                $(this).data('cloned', $(this).clone().removeClass('cloned'));
+                            } else {
+                                $(this).removeClass('cloned');
+                            }
+                        },
+                        drag: function (event, ui) {
+                            updateLines(this);
+                        },
+                        stop: function (event, ui) {
+                            if ($(this).hasClass('cloned')) {
+                                let cloned = $(this).data('cloned').removeClass('ui-draggable-dragging');
+                                $('body').append(cloned);
+                                cloned.css({
+                                    position: 'absolute',
+                                    left: ui.offset.left,
+                                    top: ui.offset.top
+                                });
+                                cloned.draggable(draggableOptions);
+                                $(this).data('cloned', cloned);
+                                saveToLocalStorage();
+                            } else {
+                                saveToLocalStorage();
+                            }
+                        },
+                        helper: function(event) {
+                            if (event.ctrlKey) {
+                                return $(this).clone().css('opacity', 1);
+                            } else {
+                                return $(this);
+                            }
+                        }
+             }
+            
+
+
     //DETECT DOUBLE CLICKS ON THE TEXTAREA DIV
     $('body').on('dblclick', '.textarea', function(){
         $(this).attr('contenteditable', 'true').focus();
@@ -122,14 +181,7 @@
     $('body').on('blur', '.textarea', function(){
 
         $(this).attr('contenteditable', 'false');
-        $(this).closest('.circle').draggable({
-            drag: function (event, ui) {
-                updateLines(this);
-            },
-            stop: function (event, ui) {
-                saveToLocalStorage();
-            }
-        });
+        $(this).closest('.circle').draggable(draggableOptions);
 
         saveToLocalStorage();
     })
@@ -155,14 +207,7 @@
               height: '20vw'
           }, 2000);
         $('body').append(myNewCircle);
-         $(myNewCircle).draggable({
-            drag: function (event, ui){
-                updateLines(this);
-            }, 
-            stop: function (event, ui) {
-                 saveToLocalStorage();
-             }
-         });
+         $(myNewCircle).draggable(draggableOptions);
          saveToLocalStorage();
       })
        
@@ -172,14 +217,7 @@
             height: '20vw'
         },2000);
 
-        $('.circle').draggable({
-                drag: function (event, ui) {
-                    updateLines(this);
-                },
-                stop: function (event, ui) {
-                    saveToLocalStorage();
-                }
-            });
+         $('.circle').draggable(draggableOptions);
 
        
        //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
@@ -401,14 +439,7 @@
                     circle.width(circleData.width);
                     circle.height(circleData.width);
                     $('body').append(circle);
-                    $(circle).draggable({
-                        drag: function(event, ui){
-                            updateLines(this);
-                        },
-                        stop: function(event, ui){
-                            saveToLocalStorage();
-                        }
-                    });
+                    $(circle).draggable(draggableOptions);
                 }) //end circles for each
 
                 // Recreate lines
@@ -426,6 +457,11 @@
    
             } //end load from local storage
 
+            //CONTROL DRAG DUPLICATES
+
+          
+
+           
 
     </script>
     
