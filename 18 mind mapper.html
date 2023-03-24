@@ -61,6 +61,64 @@
     transform-origin: 0 100%;
 }
 
+/* CSS */
+.button {
+    appearance: button;
+    background-color: #1899D6;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: block;
+    font-family: din-round,sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 10px 13px;
+    text-align: center;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+}
+
+.button:after {
+  background-clip: padding-box;
+  background-color: #1CB0F6;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button:main,
+.button:focus {
+  user-select: auto;
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button:disabled {
+  cursor: auto;
+}
 
     </style>
 
@@ -73,6 +131,7 @@
         <div class="plusButton">+</div>
         <input type="color" id="color">
         <input type="range" min="50" max="1500" value="200" id="circlesize">
+        <button id="deleteSave" class="button">Delete save</button>
     
     </div>
 
@@ -158,7 +217,8 @@
 
                                 let otherCircleID;
 
-                                 let originalCircleID = $(this).data('originalCircle');
+                                //get the id of the circle from which the clone was made
+                                let originalCircleID = $(this).data('originalCircle');
 
                                 //check if there are lines with the id of the original one:
                                 let allConnectedLines = $(`.line[data-circle1="${originalCircleID}"],.line[data-circle2="${originalCircleID}"]`);
@@ -169,30 +229,37 @@
                                     allConnectedLines.each(function (index, line) {
                                         let lineCircleConnect1 = $(line).data('circle1');
                                         let lineCircleConnect2 = $(line).data('circle2');
-                                        otherCircleID = (lineCircleConnect1 === $(originalCircleID).attr('id')) ? lineCircleConnect2 : lineCircleConnect1;
+                                        
+                                        //if the id matches with lineCircleConnect1 then give us lenCircleCOnnect2, else give us lineCircleConnect1 
+                                        otherCircleID = (lineCircleConnect1 == originalCircleID) ? lineCircleConnect2 : lineCircleConnect1;
                                         //console.log(otherCircleID);
                                     });
+
+                                    //select the circle based on the other end of the line
+                                    let theOtherCircle = $('#' + otherCircleID);
+
 
                                     //now draw the line:
 
                                     let selectedCircle = $(cloned);
 
                                     let selectedCircleID = selectedCircle.attr('id');
-                                    let clickedCircleID = otherCircleID;
+                                    //let clickedCircleID = otherCircleID;
 
-                                    console.log('selectedCircleID ' + selectedCircleID + ' clickedCircleID ' + clickedCircleID);
+                                    console.log('selectedCircleID ' + selectedCircleID + ' otherCircleID ' + otherCircleID);
 
                                     let selectedCircleWidth = selectedCircle[0].getBoundingClientRect().width;
-                                    let clickedCircleWidth = $(this)[0].getBoundingClientRect().width;
+                                    let theOtherCircleWidth = $(theOtherCircle)[0].getBoundingClientRect().width;
 
                                     let x1pos = selectedCircle[0].getBoundingClientRect().left + selectedCircleWidth / 2; //[0] take the first element from the jQuery object and then get it's x coordinate
-                                    let y1pos = selectedCircle[0].getBoundingClientRect().top + clickedCircleWidth / 2;
-                                    let x2pos = $(this)[0].getBoundingClientRect().left + clickedCircleWidth / 2;
-                                    let y2pos = $(this)[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+                                    let y1pos = selectedCircle[0].getBoundingClientRect().top + selectedCircleWidth / 2;
+                                    let x2pos = $(this)[0].getBoundingClientRect().left + theOtherCircleWidth / 2;
+                                    let y2pos = $(this)[0].getBoundingClientRect().top + theOtherCircleWidth / 2;
 
                                     console.log('creating a line now, this is: ' + this);
 
-                                    createLine(x1pos, y1pos, x2pos, y2pos, selectedCircleID, clickedCircleID);
+                                    createLine(x1pos, y1pos, x2pos, y2pos, selectedCircleID, otherCircleID);
+                                    updateLines(cloned);
 
 
                                 }
@@ -512,7 +579,23 @@
             //CONTROL DRAG DUPLICATES
 
           
+    
 
+    //remove the saved data when clicked
+        document.querySelector('#deleteSave').addEventListener('click', function () {
+
+            if (confirm("Are you sure you want to delete your notes from storage?")) {
+                //code for deleting
+                localStorage.removeItem('mindMapperData');
+                window.location.reload();
+
+
+            } else {
+                //just cancel
+            }
+
+
+        })
            
 
     </script>
