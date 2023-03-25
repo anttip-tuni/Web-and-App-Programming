@@ -145,8 +145,8 @@
         <div class="uielem"><div class="plusButton">+</div></div>
         <div class="uielem"><input type="color" id="color"></div>
         <div class="uielem"><input type="range" min="50" max="1500" value="200" id="circlesize"></div>
-        <div class="uielem"></div>
-        <div class="uielem"></div>
+        <div class="uielem"><img id="clonebrush" src="iconmonstr-paintbrush-3-64.png" alt=""></div>
+        <div class="uielem"><img id="eraser" src="iconmonstr-eraser-1-48.png" alt=""></div>
         <div class="uielem"></div>
         <div class="uielem"></div>
         <div class="uielem"></div>
@@ -183,6 +183,7 @@
         */
 
     let newCircleID = 1;
+    let eraseMode = false;
 
     $(document).ready(function(){
         loadFromLocalStorage();
@@ -365,14 +366,28 @@
        
        //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
         $('body').on('click', '.circle', function(){
-            $(this).toggleClass('selected');
+            
+            //check for special modes like eraseMode and TO DO: cloneMode
+
+            if (!eraseMode){
+                $(this).toggleClass('selected');
+            } else { //erasemode
+
+                deleteElement(this);
+                
+            }
+            
+            
+
         });
 
-        //remove selection from circles if just the body was clicked
+        //remove selection from circles if just the body or an empty area was clicked
         $('body').click(function(e){
             if ($(e.target).is('body')){
                 console.log('should remove selections now');
                  $('.circle').removeClass('selected');
+                 eraseMode = false;
+                 changeMode();
             }
         })
 
@@ -634,8 +649,6 @@
 
           $(document).keydown(function (event) {
                 if (event.key === 'Delete' || event.keyCode === 46) {
-                    
-                    
 
                     let linesToDelete;
                     $('.selected').each(function(){
@@ -656,12 +669,46 @@
                     saveToLocalStorage();
 
 
-                }
-      
-
-                
+                }  
 
             })
+
+            //more generic delete function
+            function deleteElement(myElem){
+
+                linesToDelete = getConnectedLines(myElem);
+
+                        if (linesToDelete) {
+                            linesToDelete.remove();
+                        }
+
+                        myElem.remove();
+
+                        saveToLocalStorage();
+
+            }
+
+
+            
+
+        //enable or disable eraser brush
+            $('#eraser').on('click', function () {
+                eraseMode = !eraseMode; //toggle boolean
+
+                changeMode();
+
+            })
+
+            function changeMode(){
+
+                //when erasemode mode is on:
+                if (eraseMode) {
+                    $('body').css('cursor', 'url(iconmonstr-eraser-1-48.png) 16 32, auto');
+                } else {
+                    $('body').css('cursor', 'unset');
+                }
+
+            }
 
         /* 
         
