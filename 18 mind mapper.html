@@ -414,7 +414,7 @@
 
             function updateLines(circle){
 
-                let allConnectedLines = $(`.line[data-circle1="${$(circle).attr('id')}"],.line[data-circle2="${$(circle).attr('id')}"]`);
+                let allConnectedLines = getConnectedLines(circle);
 
                 allConnectedLines.each(function (index, line){
 
@@ -596,6 +596,74 @@
 
 
         })
+
+        //a helper function that returns all lines connected to the passed in circle
+
+        function getConnectedLines(circle){
+
+           let theLines = $(`.line[data-circle1="${$(circle).attr('id')}"],.line[data-circle2="${$(circle).attr('id')}"]`);
+
+           return theLines;
+        }
+
+        //DELETE THE SELECTED CIRCLES WHEN PRESSING DELETE
+
+          $(document).keydown(function (event) {
+                if (event.key === 'Delete' || event.keyCode === 46) {
+                    
+                    
+
+                    let linesToDelete;
+                    $('.selected').each(function(){
+                        linesToDelete = getConnectedLines(this);
+
+                        if (linesToDelete) {
+                            linesToDelete.remove();
+                        }
+
+                        this.remove();
+
+                    })
+
+                    chek = linesToDelete;
+
+                    
+
+                    saveToLocalStorage();
+
+
+                }
+      
+
+                
+
+            })
+
+        /* 
+        
+        -control drag to clone a circle
+
+        -make an object variable from the draggable settings, since they are getting quite complex and annoying to maintain
+
+        -delete save button for local storage
+
+        -new getConnectedLines function to make getting lines nicer
+
+        -deleting selected circles (and the lines connected to them)
+        
+        -change font size (and store that also in local storage)
+
+        -clone brush to clone settings
+
+        -canvas drag and zoom
+
+        -file save system
+
+        -undo system (complicated)
+            *Handle: create new circles, change text, move circle, delete a circle (needs to store all deleted circle features, including the text inside)
+
+        
+        */
            
 
     </script>
