@@ -12,6 +12,8 @@
 
         #main{
             min-height: 80vh;
+            transition: transform 0.3s ease;
+
 
         }
 
@@ -28,9 +30,11 @@
         div#header {
             display: grid;
             grid-template-columns: 3fr repeat(9,1fr);
-
-        }
-
+            z-index: 200;
+            position: fixed;
+            background-color: white;
+            box-shadow: 1px 1px 10px black;
+    }
         
 
         .uielem {
@@ -149,10 +153,10 @@
         <div class="uielem"><h1>Mind Mapper</h1></div>
         <div class="uielem"><div class="plusButton">+</div></div>
         <div class="uielem"><input type="color" id="color"></div>
-        <div class="uielem"><input type="range" min="50" max="1500" value="200" id="circlesize"></div>
+        <div class="uielem"><h3>Circle size:</h3><input type="range" min="50" max="1500" value="200" id="circlesize"></div>
         <div class="uielem"><img id="clonebrush" src="iconmonstr-paintbrush-3-64.png" alt=""></div>
         <div class="uielem"><img id="eraser" src="iconmonstr-eraser-1-48.png" alt=""></div>
-        <div class="uielem"></div>
+        <div class="uielem"><h3>Canvas Zoom:</h3><input type="range" min="50" max="1500" value="200" id="canvasZoom"></div>
         <div class="uielem"></div>
         <div class="uielem"></div>
         <div class="uielem"><button id="deleteSave" class="button">Delete save</button></div>
@@ -403,6 +407,9 @@
             $(this).css('background-color', circleColor);
 
              setCircleWidth(this, circleWidth);
+
+             updateLines(this);
+
             
         }
     });
@@ -477,31 +484,40 @@
 
             }
 
-            //UPDATE THE LINES WHEN A CIRCLE IS MOVED
+            
+    // UPDATE THE LINES WHEN A CIRCLE IS MOVED
+    function updateLines(circle) {
+        let allConnectedLines = getConnectedLines(circle);
 
-            function updateLines(circle){
+        allConnectedLines.each(function (index, line) {
+            let lineCircleConnect1 = $(line).data('circle1'); // get the circle ids from the lines
+            let lineCircleConnect2 = $(line).data('circle2');
 
-                let allConnectedLines = getConnectedLines(circle);
+            let circle1 = $('#' + lineCircleConnect1); // select the circle from dom
+            let circle2 = $('#' + lineCircleConnect2); // select the circle from dom
 
-                allConnectedLines.each(function (index, line){
+            let x1Pos =
+                circle1[0].getBoundingClientRect().left +
+                window.scrollX +
+                circle1[0].getBoundingClientRect().width / 2;
+            let y1Pos =
+                circle1[0].getBoundingClientRect().top +
+                window.scrollY +
+                circle1[0].getBoundingClientRect().height / 2;
+            let x2Pos =
+                circle2[0].getBoundingClientRect().left +
+                window.scrollX +
+                circle2[0].getBoundingClientRect().width / 2;
+            let y2Pos =
+                circle2[0].getBoundingClientRect().top +
+                window.scrollY +
+                circle2[0].getBoundingClientRect().height / 2;
 
-                    let lineCircleConnect1 = $(line).data('circle1'); //get the circle ids from the lines
-                    let lineCircleConnect2 = $(line).data('circle2');
+            $(this).remove();
 
-                    let circle1 = $('#' + lineCircleConnect1); //select the circle from dom
-                    let circle2 = $('#' + lineCircleConnect2); //select the circle from dom
-
-                    let x1Pos = circle1[0].getBoundingClientRect().left + circle1[0].getBoundingClientRect().width / 2;
-                    let y1Pos = circle1[0].getBoundingClientRect().top + circle1[0].getBoundingClientRect().height / 2;
-                    let x2Pos = circle2[0].getBoundingClientRect().left + circle2[0].getBoundingClientRect().width / 2;
-                    let y2Pos = circle2[0].getBoundingClientRect().top + circle2[0].getBoundingClientRect().height / 2;
-
-                    $(this).remove();
-
-                    createLine(x1Pos, y1Pos, x2Pos, y2Pos, circle1.attr('id'), circle2.attr('id'));
-
-                })
-            } //update lines
+            createLine(x1Pos, y1Pos, x2Pos, y2Pos, circle1.attr('id'), circle2.attr('id'));
+        });
+    } // update lines
 
 
             //CHANGE THE COLOR OF THE SELECTED CIRCLES
@@ -650,10 +666,6 @@
    
             } //end load from local storage
 
-            //CONTROL DRAG DUPLICATES
-
-          
-    
 
     //remove the saved data when clicked
         document.querySelector('#deleteSave').addEventListener('click', function () {
@@ -663,11 +675,9 @@
                 localStorage.removeItem('mindMapperData');
                 window.location.reload();
 
-
             } else {
                 //just cancel
             }
-
 
         })
 
@@ -697,12 +707,7 @@
 
                     })
 
-                    chek = linesToDelete;
-
-                    
-
                     saveToLocalStorage();
-
 
                 }  
 
@@ -761,6 +766,16 @@
 
             }
 
+            //CANVAS ZOOM
+
+            const canvasZoom = document.getElementById('canvasZoom');
+                const main = document.getElementById('main');
+
+                canvasZoom.addEventListener('input', function (event) {
+                    const zoomValue = event.target.value / 100;
+                    main.style.transform = `scale(${zoomValue})`;
+                });
+
         /* 
         
         -control drag to clone a circle
@@ -779,7 +794,12 @@
 
         -clone brush to clone settings
 
-        -canvas drag and zoom
+        -canvas drag
+            *Add a #main element and replace all body appends with #main
+            *The #main needs a min-height
+            *Note that this will create a need to modify the updateLines function because of scroll bars possibly appearing. The scroll.X and scroll.Y need to be accounted for now
+
+        -canvas zoom is just too complicated to implement at this point, it messes up the calculations
 
         -file save system
 
