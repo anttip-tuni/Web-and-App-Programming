@@ -21,7 +21,18 @@
         }
 
         div#header {
+            display: grid;
+            grid-template-columns: 3fr repeat(9,1fr);
+
+        }
+
+        
+
+        .uielem {
+            padding: 1rem;
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .plusButton {
@@ -120,6 +131,8 @@
   cursor: auto;
 }
 
+
+
     </style>
 
     <link rel="stylesheet" href="jquery-ui.css">
@@ -127,11 +140,22 @@
 <body>
 
     <div id="header">
-        <h1>Mind Mapper</h1>
-        <div class="plusButton">+</div>
-        <input type="color" id="color">
-        <input type="range" min="50" max="1500" value="200" id="circlesize">
-        <button id="deleteSave" class="button">Delete save</button>
+        
+        <div class="uielem"><h1>Mind Mapper</h1></div>
+        <div class="uielem"><div class="plusButton">+</div></div>
+        <div class="uielem"><input type="color" id="color"></div>
+        <div class="uielem"><input type="range" min="50" max="1500" value="200" id="circlesize"></div>
+        <div class="uielem"></div>
+        <div class="uielem"></div>
+        <div class="uielem"></div>
+        <div class="uielem"></div>
+        <div class="uielem"></div>
+        <div class="uielem"><button id="deleteSave" class="button">Delete save</button></div>
+
+        
+        
+        
+        
     
     </div>
 
@@ -649,7 +673,9 @@
 
         -new getConnectedLines function to make getting lines nicer
 
-        -deleting selected circles (and the lines connected to them)
+        -deleting selected circles (and the lines connected to them) when pressing delete
+
+        -extend delete functionality to a delete tool as well
         
         -change font size (and store that also in local storage)
 
