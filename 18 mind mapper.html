@@ -10,6 +10,11 @@
             min-height: 90vh;
         }
 
+        #main{
+            min-height: 80vh;
+
+        }
+
         .circle{
             width: 200px;
             height: 200px;
@@ -159,11 +164,16 @@
     
     </div>
 
-    <div class="circle" id="c0">
-        <div class="textareawrap">
-            <div class="textarea" contenteditable="false">Change Me</div>
-        </div>
+    <div id="main">
+        <div class="circle" id="c0">
+                <div class="textareawrap">
+                    <div class="textarea" contenteditable="false">Change Me</div>
+                </div>
+            </div>
+
     </div>
+
+   
 
     <script src="jquery-3.6.3.js"></script>
     <script src="jquery-ui.min.js"></script>
@@ -188,6 +198,7 @@
 
     $(document).ready(function(){
         loadFromLocalStorage();
+        $('#main').draggable();
     })
 
 
@@ -228,7 +239,7 @@
                         stop: function (event, ui) {
                             if ($(this).hasClass('cloned')) {
                                 let cloned = $(this).data('cloned').removeClass('ui-draggable-dragging');
-                                $('body').append(cloned);
+                                $('#main').append(cloned);
                                 cloned.css({
                                     position: 'absolute',
                                     left: ui.offset.left,
@@ -351,7 +362,7 @@
               width: '20vw',
               height: '20vw'
           }, 2000);
-        $('body').append(myNewCircle);
+        $('#main').append(myNewCircle);
          $(myNewCircle).draggable(draggableOptions);
          saveToLocalStorage();
       })
@@ -366,28 +377,44 @@
 
        
        //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
-        $('body').on('click', '.circle', function(){
-            
-            //check for special modes like eraseMode and TO DO: cloneMode
+   // ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN IT'S CLICKED
+    $('body').on('click', '.circle', function () {
+        // Check for special modes like eraseMode and cloneMode
+        if (!eraseMode && !cloneMode) {
+            // Normal mode: Toggle the 'selected' class
+            $(this).toggleClass('selected');
+        } else if (eraseMode) {
+            // Erase mode: Delete the element
+            deleteElement(this);
+        } else if (cloneMode) {
+            // Add your cloneMode logic here
+            //first get the first selected circle (hopefully there would be only one selected) and take the properties from it
 
-            if (!eraseMode){
-                $(this).toggleClass('selected');
-            } else { //erasemode
+            let selectedCircle = $('.selected');
 
-                deleteElement(this);
-                
+            if (selectedCircle.length < 1){
+                alert ("Select the clone source circle first");
             }
-            
-            
 
-        });
+            let circleColor = selectedCircle.css('background-color');
+
+            let circleWidth = selectedCircle.css('width');
+
+            $(this).css('background-color', circleColor);
+
+             setCircleWidth(this, circleWidth);
+            
+        }
+    });
+
 
         //remove selection from circles if just the body or an empty area was clicked
-        $('body').click(function(e){
-            if ($(e.target).is('body')){
+        $('#main').click(function(e){
+            if ($(e.target).is('#main')){
                 console.log('should remove selections now');
                  $('.circle').removeClass('selected');
                  eraseMode = false;
+                 cloneMode = false;
                  changeMode();
             }
         })
@@ -433,7 +460,7 @@
                 offsetY = (y1 > y2) ? y2 : y1;
 
                 let line = $('<div>')
-                            .prependTo('body')
+                            .prependTo('#main')
                             .addClass('line')
                             .css({
                                 'position': 'absolute',
@@ -494,23 +521,30 @@
                 //console.log('scaleValueFromSlider: ' + scaleValueFromSlider);
                 $('.selected').each(function() {
 
-                    const currentWidth = $(this).outerWidth();
-                    //console.log(currentWidth);
-                    $(this).css({'width': scaleValueFromSlider, 'height': scaleValueFromSlider});
-
-                    const currentPosition = $(this).position();
-
-                    let newX = currentPosition.left - (scaleValueFromSlider - currentWidth) / 2;
-                    let newY = currentPosition.top - (scaleValueFromSlider - currentWidth) / 2;
-
-                    $(this).css({left: newX, top: newY});
-                   
+                    
+                   setCircleWidth(this, scaleValueFromSlider);
 
 
 
                 })
                 saveToLocalStorage();
             })
+
+            //MORE GENERIC WIDTH SETTER
+
+            function setCircleWidth(circle, widthToSet){
+
+                const currentWidth = $(circle).outerWidth();
+                //console.log(currentWidth);
+                $(circle).css({ 'width': widthToSet, 'height': widthToSet });
+
+                const currentPosition = $(circle).position();
+
+                let newX = currentPosition.left - (widthToSet - currentWidth) / 2;
+                let newY = currentPosition.top - (widthToSet - currentWidth) / 2;
+
+                $(circle).css({ left: newX, top: newY });
+            }
 
             //GET THE NECESSARY DATA FROM EVERY ELEMENT OF THE MIND MAP
             function extractData(){
@@ -597,7 +631,7 @@
                     circle.css('top', circleData.position.top + 'px');
                     circle.width(circleData.width);
                     circle.height(circleData.width);
-                    $('body').append(circle);
+                    $('#main').append(circle);
                     $(circle).draggable(draggableOptions);
                 }) //end circles for each
 
