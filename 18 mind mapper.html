@@ -184,6 +184,7 @@
 
     let newCircleID = 1;
     let eraseMode = false;
+    let cloneMode = false;
 
     $(document).ready(function(){
         loadFromLocalStorage();
@@ -699,11 +700,27 @@
 
             })
 
+            //enable or disable clone brush
+                $('#clonebrush').on('click', function () {
+                    cloneMode = !cloneMode; //toggle boolean
+
+                    changeMode();
+
+                })
+
+
             function changeMode(){
 
                 //when erasemode mode is on:
                 if (eraseMode) {
                     $('body').css('cursor', 'url(iconmonstr-eraser-1-48.png) 16 32, auto');
+                } else {
+                    $('body').css('cursor', 'unset');
+                }
+
+                //when cloneMode mode is on:
+                if (cloneMode) {
+                    $('body').css('cursor', 'url(iconmonstr-paintbrush-3-64.png) 16 32, auto');
                 } else {
                     $('body').css('cursor', 'unset');
                 }
