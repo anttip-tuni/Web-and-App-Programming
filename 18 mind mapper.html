@@ -21,7 +21,17 @@
         }
 
         div#header {
+            display: grid;
+            grid-template-columns: 3fr repeat(9, 1fr);
+            background-color: white;
+            box-shadow: 1px 1px 10px black;
+        }
+
+        .uiElem {
+            padding: 1rem;
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .plusButton {
@@ -61,6 +71,65 @@
     transform-origin: 0 100%;
 }
 
+/* Button styles */
+
+.button {
+    appearance: button;
+    background-color: #1899D6;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: block;
+    font-family: din-round,sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 10px 13px;
+    text-align: center;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+}
+
+.button:after {
+  background-clip: padding-box;
+  background-color: #1CB0F6;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button:main,
+.button:focus {
+  user-select: auto;
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button:disabled {
+  cursor: auto;
+}
 
     </style>
 
@@ -69,11 +138,17 @@
 <body>
 
     <div id="header">
-        <h1>Mind Mapper</h1>
-        <div class="plusButton">+</div>
-        <input type="color" id="color">
-        <input type="range" min="50" max="1500" value="200" id="circlesize">
-    
+        <div class="uiElem"><h1>Mind Mapper</h1></div>
+        <div class="uiElem"><div class="plusButton">+</div></div>
+        <div class="uiElem"><input type="color" id="color"></div>
+        <div class="uiElem"><input type="range" min="50" max="1500" value="200" id="circlesize"></div>
+        <div class="uiElem"></div>
+        <div class="uiElem"></div>
+        <div class="uiElem"></div>
+        <div class="uiElem"></div>
+        <div class="uiElem"></div>
+        <div class="uiElem"><button id="deleteSave" class="button">Delete Save</button></div>
+ 
     </div>
 
     <div class="circle" id="c0">
@@ -425,6 +500,20 @@
                 });
    
             } //end load from local storage
+
+            //DELETE LOCAL STORAGE SAVE
+
+            $('#deleteSave').click(()=>{
+                if (confirm("Are you sure you want to delete your saved mind map from storage?")){
+                    localStorage.removeItem('mindMapperData');
+                    localStorage.removeItem('latestID');
+                    window.location.reload(); //refresh the page
+
+                }
+            });
+
+            //CONTROL DRAG TO CLONE A CIRCLE
+
 
 
     </script>
