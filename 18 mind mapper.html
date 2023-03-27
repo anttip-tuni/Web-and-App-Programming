@@ -183,7 +183,7 @@
                 if (event.ctrlKey){
                     $(this).addClass('cloned'); //add a class to the dragged elements
                     $(this).data('cloned', $(this).clone().removeClass('cloned'));
-                    $(this).data('originalCircle', $(this).attr('id')); // store the id of the original circle
+                    $(this).data('originalCircleID', $(this).attr('id')); // store the id of the original circle
                     
                 } else {
                     $(this).removeClass('cloned');
@@ -196,8 +196,70 @@
                 if ($(this).hasClass('cloned')){
                     let cloned = $(this).data('cloned');
                     $('body').append(cloned);
-                }
+                    cloned.css({
+                        position: 'absolute',
+                        left: ui.offset.left,
+                        top: ui.offset.top
+                    });
+                    cloned.attr('id', 'c' + newCircleID);
+                    newCircleID++;
+                    cloned.draggable(draggableOptions);
+
+                    const originalCircleID = $(this).data('originalCircleID');
+
+                    //check if there are any lines that connect to the originalCircle
+                    let allConnectedLines = $(`.line[data-circle1="${originalCircleID}"],.line[data-circle2="${originalCircleID}"]`);
+
+                    if (allConnectedLines.length > 0){ //we don't want to do anything if there are no connected lines
+
+                    //scoping
+                    let parentCircleID;
+
+                        allConnectedLines.each(function(index, line){
+
+                            const connectsTo1 = $(line).data('circle1');
+                            const connectsTo2 = $(line).data('circle2');
+
+
+                            //assign the parentCircleID variable to the data attribute that does not match the originlaCircleID. So after ? comes the value if the statement is true and after : the value we set if the statement was false
+                            parentCircleID = (connectsTo1 == originalCircleID) ? connectsTo2 : connectsTo1;
+
+                        })
+
+                        let parentCircleElem = $('#' + parentCircleID); //selects based on a dynamic ID value
+
+                        let selectedCircle = $(cloned);
+
+                        let selectedCircleID = selectedCircle.attr('id');
+                        let clickedCircleID = parentCircleID;
+
+                        console.log('selectedCircleID ' + selectedCircleID + ' clickedCircleID ' + clickedCircleID);
+
+                        let selectedCircleWidth = selectedCircle[0].getBoundingClientRect().width;
+                        let clickedCircleWidth = $(parentCircleElem)[0].getBoundingClientRect().width;
+
+                        let x1pos = selectedCircle[0].getBoundingClientRect().left + selectedCircleWidth / 2; //[0] take the first element from the jQuery object and then get it's x coordinate
+                        let y1pos = selectedCircle[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+                        let x2pos = $(parentCircleElem)[0].getBoundingClientRect().left + clickedCircleWidth / 2;
+                        let y2pos = $(parentCircleElem)[0].getBoundingClientRect().top + clickedCircleWidth / 2;
+
+                        console.log('creating a line now, this is: ' + this);
+
+                        createLine(x1pos, y1pos, x2pos, y2pos, selectedCircleID, parentCircleID);
+                        saveToLocalStorage();
+
+                    } //if length of lines is greater than 0
+
+
+                } //end if hasClass cloned
                 saveToLocalStorage();
+            },
+            helper: function(event){ //add a visual helper object when ctrl dragging
+                if (event.ctrlKey){
+                    return $(this).clone();
+                } else {
+                    return $(this);
+                }
             }
         }
 
