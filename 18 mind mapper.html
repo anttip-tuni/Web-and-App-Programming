@@ -181,7 +181,10 @@ input#fontsize {
         <div class="uiElem">
             <button id="download" class="button">Download</button>
         </div>
-        <div class="uiElem"></div>
+        <div class="uiElem">
+            <h2>Open file</h2>
+            <input type="file" id="jsonFile" accept="application/json">
+        </div>
         <div class="uiElem"></div>
         <div class="uiElem"><button id="deleteSave" class="button">Delete Save</button></div>
  
@@ -681,6 +684,30 @@ input#fontsize {
 
             })
 
+            //HANDLE FILE UPLOAD
+
+            $('#jsonFile').change(function(event){
+                console.log('file input changed');
+                const file = event.target.files[0];
+
+                if (file){
+
+                    const myReader = new FileReader();
+
+                    myReader.onload = function(ev){
+                        try {
+
+                            localStorage.setItem('mindMapperData', ev.target.result);
+                            loadFromLocalStorage();
+
+                        } catch (error){
+                            alert('The file was not right: ' + error);
+                        }
+                    }
+                        myReader.readAsText(file);
+                }
+
+            })
 
 
     </script>
