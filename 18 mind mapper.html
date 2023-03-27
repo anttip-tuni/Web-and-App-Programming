@@ -178,7 +178,9 @@ input#fontsize {
             <h2>Change font color</h2>
             <input type="color" id="fontcolor">
         </div>
-        <div class="uiElem"></div>
+        <div class="uiElem">
+            <button id="download" class="button">Download</button>
+        </div>
         <div class="uiElem"></div>
         <div class="uiElem"></div>
         <div class="uiElem"><button id="deleteSave" class="button">Delete Save</button></div>
@@ -663,6 +665,21 @@ input#fontsize {
                     $('.circle.selected').find('.textarea').css('color', this.value);
 
                 })
+
+            //DETECT CLICKS ON THE DOWNLOAD BUTTON
+            $('#download').click(function(){
+                const data = extractData();
+                const jsonData = JSON.stringify(data);
+                const myBlob = new Blob([jsonData], {type: 'application/json'});
+                const myLink = document.createElement('a'); //create a new temporary link
+                myLink.href = URL.createObjectURL(myBlob);
+                myLink.download = 'mindmap.json';
+
+                document.body.appendChild(myLink);
+                myLink.click();
+                document.body.removeChild(myLink)
+
+            })
 
 
 
