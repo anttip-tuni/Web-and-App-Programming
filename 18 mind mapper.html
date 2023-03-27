@@ -179,10 +179,24 @@
     //LET'S CREATE A NAMED OBJECT FOR ALL THE DRAGGABLE SETTINGS TO AVOID REPETITION
 
         const draggableOptions = {
-            drag: function (event, ui) {
+            start: function (event, ui){ //this method is triggered when the dragging starts
+                if (event.ctrlKey){
+                    $(this).addClass('cloned'); //add a class to the dragged elements
+                    $(this).data('cloned', $(this).clone().removeClass('cloned'));
+                    $(this).data('originalCircle', $(this).attr('id')); // store the id of the original circle
+                    
+                } else {
+                    $(this).removeClass('cloned');
+                }
+            },
+            drag: function (event, ui) { //this happens all the time when the element is being dragged
                 updateLines(this);
             },
-            stop: function (event, ui) {
+            stop: function (event, ui) { //when the dragging stops
+                if ($(this).hasClass('cloned')){
+                    let cloned = $(this).data('cloned');
+                    $('body').append(cloned);
+                }
                 saveToLocalStorage();
             }
         }
