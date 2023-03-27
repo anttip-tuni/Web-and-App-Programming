@@ -176,6 +176,17 @@
 
     let newCircleID = 1;
 
+    //LET'S CREATE A NAMED OBJECT FOR ALL THE DRAGGABLE SETTINGS TO AVOID REPETITION
+
+        const draggableOptions = {
+            drag: function (event, ui) {
+                updateLines(this);
+            },
+            stop: function (event, ui) {
+                saveToLocalStorage();
+            }
+        }
+
     $(document).ready(function(){
         loadFromLocalStorage();
     })
@@ -197,14 +208,7 @@
     $('body').on('blur', '.textarea', function(){
 
         $(this).attr('contenteditable', 'false');
-        $(this).closest('.circle').draggable({
-            drag: function (event, ui) {
-                updateLines(this);
-            },
-            stop: function (event, ui) {
-                saveToLocalStorage();
-            }
-        });
+        $(this).closest('.circle').draggable(draggableOptions);
 
         saveToLocalStorage();
     })
@@ -230,14 +234,7 @@
               height: '20vw'
           }, 2000);
         $('body').append(myNewCircle);
-         $(myNewCircle).draggable({
-            drag: function (event, ui){
-                updateLines(this);
-            }, 
-            stop: function (event, ui) {
-                 saveToLocalStorage();
-             }
-         });
+         $(myNewCircle).draggable(draggableOptions);
          saveToLocalStorage();
       })
        
@@ -247,15 +244,10 @@
             height: '20vw'
         },2000);
 
-        $('.circle').draggable({
-                drag: function (event, ui) {
-                    updateLines(this);
-                },
-                stop: function (event, ui) {
-                    saveToLocalStorage();
-                }
-            });
+        $('.circle').draggable(draggableOptions);
 
+
+        
        
        //ADD OR REMOVE THE SELECTED CLASS OF A CIRCLE WHEN ITS CLICKED
         $('body').on('click', '.circle', function(){
@@ -476,14 +468,7 @@
                     circle.width(circleData.width);
                     circle.height(circleData.width);
                     $('body').append(circle);
-                    $(circle).draggable({
-                        drag: function(event, ui){
-                            updateLines(this);
-                        },
-                        stop: function(event, ui){
-                            saveToLocalStorage();
-                        }
-                    });
+                    $(circle).draggable(draggableOptions);
                 }) //end circles for each
 
                 // Recreate lines
