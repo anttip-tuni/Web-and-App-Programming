@@ -573,7 +573,27 @@
                 }
             });
 
-            //CONTROL DRAG TO CLONE A CIRCLE
+            //DELETE THE SELECTED CIRCLES WHEN PRESSING DELETE
+
+            $(document).keydown(function(event){
+                    if (event.key === 'Delete' || event.keyCode === 46){ //two ways of checking if delete was pressed two pipes || mean OR
+                    console.log('Delete was pressed');
+
+                    $('.selected').each(function(){
+                        let linesToDelete = getConnectedLines(this); //call the function, pass in the current circle and store the return value into the linesToDelete variable
+                        linesToDelete.remove();
+                        this.remove();
+                    })
+                }
+            })
+
+
+            //GENERIC FUNCTION FOR SELECTING THE LINES THAT CONNECT TO A SPECIFIC CIRCLE
+
+            function getConnectedLines(circle){
+                let theLines = $(`.line[data-circle1="${$(circle).attr('id')}"],.line[data-circle2="${$(circle).attr('id')}"]`);
+                return theLines;
+            }
 
 
 
