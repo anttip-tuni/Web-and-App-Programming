@@ -547,6 +547,7 @@ input#fontsize {
                 });
 
                 return {
+                    latestID: newCircleID, //store the id in the same object now
                     circles: circlesData,
                     lines: linesData
                 }
@@ -559,26 +560,30 @@ input#fontsize {
                 const myData = extractData(); //store the return value of extractData into a variable called myData
                 const jsonData = JSON.stringify(myData);
                 localStorage.setItem('mindMapperData', jsonData);
-                localStorage.setItem('latestID', newCircleID);
+                //localStorage.setItem('latestID', newCircleID);
             }
 
             //GET THE CIRCLES AND LINES BACK FROM LOCAL STORAGE
 
             function loadFromLocalStorage(){
+                console.log('attempot to load from localstorage');
                 const jsonData = localStorage.getItem('mindMapperData');
                 if (!jsonData) return; //quit/exit the function early if there is no data yet
 
-                const theLatestID = localStorage.getItem('latestID');
-                if (!theLatestID) return;
+                //console.log('try to get the latest id');
+                //const theLatestID = localStorage.getItem('latestID');
+                //if (!theLatestID) return;
 
-                newCircleID = theLatestID;
+                //newCircleID = theLatestID;
 
 
                 const myData = JSON.parse(jsonData);
-
+                console.log('clear existing');
                 //Clear existing elements
                 $('.circle').remove();
                 $('.line').remove();
+
+                newCircleID = myData.latestID;
 
                 myData.circles.forEach(circleData => {
                     //create a new html element for each circle
@@ -698,16 +703,29 @@ input#fontsize {
                         try {
 
                             localStorage.setItem('mindMapperData', ev.target.result);
+                            console.log('should have set the localStorage, attempt to load from there next.');
                             loadFromLocalStorage();
+                            
 
                         } catch (error){
                             alert('The file was not right: ' + error);
                         }
                     }
                         myReader.readAsText(file);
+
+                        event.target.value = '';
+
                 }
 
             })
+
+            /* 
+            Next time:
+            -the file open fails because the id is stored separately and thus missing
+            would be best to store it in a "options" key in the same object instead
+
+            -do the scrollx and scrolly stuff to fix lines breaking when we have a scrollbar
+            */
 
 
     </script>
