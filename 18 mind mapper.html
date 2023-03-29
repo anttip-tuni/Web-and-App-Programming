@@ -547,6 +547,7 @@ input#fontsize {
                 });
 
                 return {
+                    latestID: newCircleID,
                     circles: circlesData,
                     lines: linesData
                 }
@@ -559,7 +560,7 @@ input#fontsize {
                 const myData = extractData(); //store the return value of extractData into a variable called myData
                 const jsonData = JSON.stringify(myData);
                 localStorage.setItem('mindMapperData', jsonData);
-                localStorage.setItem('latestID', newCircleID);
+                //localStorage.setItem('latestID', newCircleID);
             }
 
             //GET THE CIRCLES AND LINES BACK FROM LOCAL STORAGE
@@ -568,13 +569,15 @@ input#fontsize {
                 const jsonData = localStorage.getItem('mindMapperData');
                 if (!jsonData) return; //quit/exit the function early if there is no data yet
 
-                const theLatestID = localStorage.getItem('latestID');
-                if (!theLatestID) return;
+                //const theLatestID = localStorage.getItem('latestID');
+                //if (!theLatestID) return;
 
-                newCircleID = theLatestID;
+                //newCircleID = theLatestID;
 
 
                 const myData = JSON.parse(jsonData);
+
+                newCircleID = myData.latestID;
 
                 //Clear existing elements
                 $('.circle').remove();
