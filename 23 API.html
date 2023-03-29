@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        
+
+        const endpoint = 'https://www.googleapis.com/youtube/v3/search';
+        const channelID = 'UCbmxZRQk-X0p-TOxd6PEYJA';
+
+        const url = `${endpoint}?part=snippet&channelId=${channelID}&order=date&type=video&key=AIzaSyBPdz-2Pr2I3RRHs_j26MgN37JokfbwT6w`
+
+        //Make a request to the Youtube Data API
+        fetch(url)
+        .then(response => {
+            //Check if the response is ok
+            if (!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            //parse the response
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            
+            const myNewVideo = document.createElement('div');
+            myNewVideo.classList.add('latestVideo');
+            const myNewTitle = document.createElement('h2');
+            myNewTitle.textContent = data.items[0].snippet.title;
+            myNewVideo.append(myNewTitle);
+            
+            const myNewParagraph = document.createElement('p');
+            myNewParagraph.textContent =  data.items[0].snippet.description;
+
+            myNewVideo.append(myNewParagraph);
+
+            const myNewImage = document.createElement('img');
+            myNewImage.src = data.items[0].snippet.thumbnails.high.url;
+            myNewVideo.append(myNewImage);
+
+            document.body.append(myNewVideo);
+
+            
+            
+            
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        })
+
+    </script>
+
+</body>
+</html>
