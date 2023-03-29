@@ -242,7 +242,7 @@ input#fontsize {
                     cloned.css({
                         position: 'absolute',
                         left: ui.offset.left,
-                        top: ui.offset.top
+                        top: ui.offset.top - cloned[0].getBoundingClientRect().width / 2
                     });
                     cloned.attr('id', 'c' + newCircleID);
                     newCircleID++;
@@ -460,10 +460,10 @@ input#fontsize {
                     let circle1 = $('#' + lineCircleConnect1); //select the circle from dom
                     let circle2 = $('#' + lineCircleConnect2); //select the circle from dom
 
-                    let x1Pos = circle1[0].getBoundingClientRect().left + circle1[0].getBoundingClientRect().width / 2;
-                    let y1Pos = circle1[0].getBoundingClientRect().top + circle1[0].getBoundingClientRect().height / 2;
-                    let x2Pos = circle2[0].getBoundingClientRect().left + circle2[0].getBoundingClientRect().width / 2;
-                    let y2Pos = circle2[0].getBoundingClientRect().top + circle2[0].getBoundingClientRect().height / 2;
+                    let x1Pos = circle1[0].getBoundingClientRect().left + window.scrollX + circle1[0].getBoundingClientRect().width / 2;
+                    let y1Pos = circle1[0].getBoundingClientRect().top + window.scrollY + circle1[0].getBoundingClientRect().height / 2;
+                    let x2Pos = circle2[0].getBoundingClientRect().left + window.scrollX + circle2[0].getBoundingClientRect().width / 2;
+                    let y2Pos = circle2[0].getBoundingClientRect().top + window.scrollY + circle2[0].getBoundingClientRect().height / 2;
 
                     $(this).remove();
 
