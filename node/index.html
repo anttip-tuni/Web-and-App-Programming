@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <button id="loadUsers">Load users</button>
+
+    <ul id="usersList"></ul>
+
+    <h2>Add User</h2>
+        <form id="addUserForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Add User</button>
+            </form>
+
+    <script src="jquery-3.6.3.js"></script>
+
+    <script>
+
+        $('#loadUsers').click(function(){
+            $.ajax({
+                url: 'users.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data){
+                    console.log(data);
+                    let usersList = $('#usersList');
+                    usersList.empty();
+                    data.forEach(function(user){
+                        usersList.append(`<li>Name: ${user.name} Email: ${user.email}</li>`);
+                    })
+                },
+                error: function(){
+                    alert('Error loading data');
+                } 
+            })
+        }) //end loadusers
+
+        //SUBMIT THE FORM
+        $('#addUserForm').submit(function(e){
+            e.preventDefault();
+            const newUser = {
+                name: $('#name').val(),
+                email: $('#email').val()
+            };
+            $.ajax({
+                url: '/addUser',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(newUser),
+                success: function(){
+                    alert('User added succesfully');
+                    $('#addUserForm')[0].reset();
+                    $('#loadUsers').trigger('click');
+                },
+                error: function(){
+                    alert('Error adding user.')
+                }
+            })
+        })
+
+    </script>
+    
+</body>
+</html>
