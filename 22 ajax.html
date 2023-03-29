@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <h1>AJAX Example</h1>
+    <button id="loadUsers">Load Users</button>
+    <ul id="usersList"></ul>
+
+    <h2>Add User</h2>
+    <form id="addUserForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Add User</button>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $('#loadUsers').click(function () {
+                $.ajax({
+                    url: 'users.json',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        let usersList = $('#usersList');
+                        usersList.empty();
+                        data.forEach(function (user) {
+                            usersList.append('<li>' + user.name + ' (' + user.email + ')' + '</li>');
+                        });
+                    },
+                    error: function () {
+                        alert('Error loading data.');
+                    }
+                });
+            });
+
+            $('#addUserForm').submit(function (e) {
+                e.preventDefault();
+                const newUser = {
+                    name: $('#name').val(),
+                    email: $('#email').val()
+                };
+
+                $.ajax({
+                    url: '/addUser',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(newUser),
+                    success: function (response) {
+                        alert('User added successfully');
+                        $('#addUserForm')[0].reset();
+                        $('#loadUsers').trigger('click');
+                    },
+                    error: function () {
+                        alert('Error adding user.');
+                    }
+                });
+            });
+        });
+        </script>
+
+</body>
+
+</html>

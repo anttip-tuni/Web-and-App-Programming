@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        
+
+        // Define the API endpoint and channel ID
+            const endpoint = 'https://www.googleapis.com/youtube/v3/search';
+            const channelId = 'UCbmxZRQk-X0p-TOxd6PEYJA';
+
+            // Build the API request URL to retrieve the latest video
+            const url = `${endpoint}?part=snippet&channelId=${channelId}&order=date&type=video&key=AIzaSyBH8bHQer6LHg07eQxrbugLIV3SiFUIFF4`;
+
+            // Make a request to the YouTube Data API
+            fetch(url)
+                .then(response => {
+                    // Check if the response is ok
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Parse the response JSON
+                    return response.json();
+                })
+                .then(data => {
+                    // Extract the video title and ID from the response data
+                    const videoTitle = data.items[0].snippet.title;
+                    const videoId = data.items[0].id.videoId;
+                    // Log the video title and ID to the console
+                    console.log(`Latest Video Title: ${videoTitle}, ID: ${videoId}`);
+                })
+                .catch(error => {
+                    // Handle any errors that occurred during the request
+                    console.error('Error:', error);
+                });
+
+    </script>
+</body>
+</html>
