@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <?php wp_head(); ?>
+
+    <link href="<?php bloginfo('stylesheet_url'); ?>" rel="stylesheet">
+    
 </head>
 <body>
 
@@ -13,6 +16,7 @@
     <input type="text" name="searchTerm" id="searchTerm">
     <button id="searchForFood">Search</button>
     <div id="results"></div>
+    <div id="nutrition"></div>
 
     <script>
 

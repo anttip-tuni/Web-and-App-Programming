@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+    let parsedResult = '';
+
     $('#searchForFood').click(function () {
         const searchString = $('#searchTerm').val();
 
@@ -8,7 +10,7 @@ $(document).ready(function(){
 
             const dropdown = $('<select></select>').attr('id', 'foodDropDown');
 
-            let parsedResult = JSON.parse(result);
+            parsedResult = JSON.parse(result);
 
             parsedResult.forEach(food => {
                 let option = $('<option></option>').val(food.customid).text(food.name);
@@ -19,8 +21,39 @@ $(document).ready(function(){
 
         })
 
-    });
+    }); //end click
 
-})
+
+
+    $('body').on('change', '#foodDropDown', function(){
+
+        let selectedFoodObject = parsedResult.filter(obj => {
+            return obj.customid === this.value;
+        })
+
+        console.log(selectedFoodObject[0]);
+
+        const nutrition = $('#nutrition');
+        nutrition.html('');
+
+        Object.entries(selectedFoodObject[0]).forEach(([key,value]) => {
+            nutrition.append(`
+                <div class="nutritionDetail">
+
+                    <span class="key">${key}: </span>
+                    <span class="value">${value} </span>
+
+                </div>
+
+            `);
+        })
+
+        sendPopularityPointToDB(this.value).then(result => {
+            console.log('The result was: ' + result)
+        })
+
+    }) //end change
+
+}) //end doc ready
 
 
